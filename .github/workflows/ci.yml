@@ -1,0 +1,18 @@
+# PR 이 열리거나 업데이트되면 타입 체크 + 빌드가 통과하는지 확인합니다.
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build

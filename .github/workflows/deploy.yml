@@ -1,0 +1,54 @@
+# main 에 커밋이 들어오면(push / PR 머지) 빌드 검사 후 Vercel Production 에 배포합니다.
+#
+# 필요한 GitHub Secrets (Settings → Secrets and variables → Actions):
+#   VERCEL_TOKEN       : https://vercel.com/account/tokens 에서 발급
+#   VERCEL_ORG_ID      : 로컬에서 `npx vercel link` 후 .vercel/project.json 의 orgId
+#   VERCEL_PROJECT_ID  : 같은 파일의 projectId
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: vercel-production
+  cancel-in-progress: true
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel environment
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      # next build 가 타입 체크까지 수행합니다. 실패하면 배포되지 않습니다.
+      - name: Build
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy
+        id: deploy
+        run: |
+          url=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "### 🚀 배포 완료: $url" >> "$GITHUB_STEP_SUMMARY"

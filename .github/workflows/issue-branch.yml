@@ -1,0 +1,80 @@
+# 이슈가 생성되면 기본 브랜치(main)에서 작업 브랜치를 자동으로 만들고, 이슈에 댓글로 알려줍니다.
+#
+# 브랜치 이름 규칙: <prefix>/<이슈번호>-<제목 slug>
+#   - 라벨 bug          → fix/12-login-error
+#   - 라벨 docs         → docs/13-readme
+#   - 라벨 refactor     → refactor/14-button
+#   - 그 외             → feature/15-add-select-component
+#   제목이 한글뿐이라 slug 가 비면 → feature/15
+name: Issue → Branch
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  create-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create branch from issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const labels = issue.labels.map((l) => l.name.toLowerCase());
+
+            const prefixByLabel = { bug: 'fix', docs: 'docs', documentation: 'docs', refactor: 'refactor', chore: 'chore' };
+            const matched = labels.find((l) => prefixByLabel[l]);
+            const prefix = matched ? prefixByLabel[matched] : 'feature';
+
+            const slug = issue.title
+              .toLowerCase()
+              .replace(/[^a-z0-9\s-]/g, '')
+              .trim()
+              .replace(/[\s-]+/g, '-')
+              .slice(0, 40)
+              .replace(/-+$/, '');
+            const branch = `${prefix}/${issue.number}${slug ? `-${slug}` : ''}`;
+
+            const { owner, repo } = context.repo;
+            const { data: repoInfo } = await github.rest.repos.get({ owner, repo });
+            const base = repoInfo.default_branch;
+
+            let baseSha;
+            try {
+              const { data } = await github.rest.git.getRef({ owner, repo, ref: `heads/${base}` });
+              baseSha = data.object.sha;
+            } catch (e) {
+              core.setFailed(`기본 브랜치(${base})를 찾을 수 없습니다. 첫 커밋을 push 한 뒤 다시 시도하세요.`);
+              return;
+            }
+
+            try {
+              await github.rest.git.createRef({ owner, repo, ref: `refs/heads/${branch}`, sha: baseSha });
+            } catch (e) {
+              if (e.status === 422) {
+                core.info(`브랜치 ${branch} 가 이미 존재합니다.`);
+                return;
+              }
+              throw e;
+            }
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: issue.number,
+              body: [
+                `🌿 작업 브랜치가 생성되었습니다: \`${branch}\` (base: \`${base}\`)`,
+                '',
+                '```bash',
+                'git fetch origin',
+                `git switch ${branch}`,
+                '```',
+                '',
+                `PR 본문에 \`Closes #${issue.number}\` 를 적으면 머지 시 이슈가 자동으로 닫힙니다.`,
+              ].join('\n'),
+            });
