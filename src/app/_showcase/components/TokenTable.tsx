@@ -1,21 +1,54 @@
 import type { DesignToken } from '../tokens';
 import { Code, Table } from './Table';
 
+const SAMPLE = 'Aa 가나다 123';
+
 function Preview({ token }: { token: DesignToken }) {
   const v = `var(${token.name})`;
-  if (token.name.startsWith('--color-'))
-    return <span className="block size-6 rounded-sm border border-border" style={{ background: v }} />;
-  if (token.name.startsWith('--radius-'))
-    return <span className="block size-8 border-2 border-primary bg-primary-soft" style={{ borderRadius: v }} />;
-  if (token.name.startsWith('--shadow-'))
-    return <span className="block size-8 rounded-md bg-surface" style={{ boxShadow: v }} />;
-  if (token.name.startsWith('--font-'))
-    return (
-      <span className="text-base" style={{ fontFamily: v }}>
-        Aa 가나
-      </span>
-    );
-  return null;
+  const [, ns] = token.name.match(/^--([a-z]+(?:-weight)?)-/) ?? [];
+
+  switch (ns) {
+    case 'color':
+      return <span className="block size-6 rounded-sm border border-border" style={{ background: v }} />;
+    case 'text':
+      return (
+        <span className="whitespace-nowrap" style={{ fontSize: v }}>
+          {SAMPLE}
+        </span>
+      );
+    case 'font-weight':
+      return (
+        <span className="text-lg whitespace-nowrap" style={{ fontWeight: v }}>
+          {SAMPLE}
+        </span>
+      );
+    case 'font':
+      return (
+        <span className="text-lg whitespace-nowrap" style={{ fontFamily: v }}>
+          {SAMPLE}
+        </span>
+      );
+    case 'tracking':
+      return (
+        <span className="text-lg whitespace-nowrap" style={{ letterSpacing: v }}>
+          {SAMPLE}
+        </span>
+      );
+    case 'leading':
+      return (
+        <span className="block w-20 bg-primary-soft text-xs" style={{ lineHeight: v }}>
+          줄 간격 예시 텍스트
+        </span>
+      );
+    case 'spacing':
+      return <span className="block h-3 rounded-sm bg-primary" style={{ width: v }} />;
+    case 'radius':
+      return <span className="block size-8 border-2 border-primary bg-primary-soft" style={{ borderRadius: v }} />;
+    case 'shadow':
+      return <span className="block size-8 rounded-md bg-surface" style={{ boxShadow: v }} />;
+    default:
+      return null;
+  }
 }
 
 export function TokenTable({ tokens }: { tokens: DesignToken[] }) {
@@ -32,7 +65,7 @@ export function TokenTable({ tokens }: { tokens: DesignToken[] }) {
           <td>
             <code className="font-mono text-xs text-code-accent">{token.utility}</code>
           </td>
-          <td className="max-w-80 font-mono text-xs break-all text-fg-muted">{token.value}</td>
+          <td className="max-w-field font-mono text-xs break-all text-fg-muted">{token.value}</td>
         </tr>
       ))}
     </Table>

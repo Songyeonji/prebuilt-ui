@@ -14,17 +14,25 @@ export interface DesignToken {
 
 const TOKENS_FILE = join(process.cwd(), 'src/shared/styles/tokens.css');
 
+// 순서 중요: 더 구체적인 prefix(--font-weight-)가 먼저
 const utilityPrefix: Array<[string, string]> = [
   ['--color-', 'bg-'],
+  ['--text-', 'text-'],
+  ['--font-weight-', 'font-'],
+  ['--font-', 'font-'],
+  ['--leading-', 'leading-'],
+  ['--tracking-', 'tracking-'],
+  ['--spacing-', 'p-'],
+  ['--container-', 'max-w-'],
   ['--radius-', 'rounded-'],
   ['--shadow-', 'shadow-'],
-  ['--font-', 'font-'],
   ['--animate-', 'animate-'],
 ];
 
 function toUtility(name: string) {
   const match = utilityPrefix.find(([prefix]) => name.startsWith(prefix));
-  return match ? match[1] + name.slice(match[0].length) : name;
+  // 소수 키는 _ 로 정의 (--spacing-1_5 → p-1.5)
+  return match ? match[1] + name.slice(match[0].length).replace(/_/g, '.') : name;
 }
 
 /**
@@ -43,8 +51,16 @@ export const getDesignTokens = cache((): DesignToken[] => {
       continue;
     }
     const tokenMatch = line.match(/^\s*(--[\w-]+)\s*:\s*(.+?);\s*$/);
-    if (!tokenMatch || tokenMatch[1].includes('*')) continue;
+    // 기본값 제거 선언(--color-*: initial, --spacing: initial)은 토큰이 아님
+    if (!tokenMatch || tokenMatch[2] === 'initial') continue;
     const [, name, value] = tokenMatch;
+    // --text-md--line-height 같은 보조 값은 본 토큰의 값에 합쳐서 표시
+    const sub = name.match(/^(--[\w-]+?)--([\w-]+)$/);
+    if (sub) {
+      const parent = tokens.find((t) => t.name === sub[1]);
+      if (parent) parent.value += ` / ${value}`;
+      continue;
+    }
     tokens.push({ group, name, value, utility: toUtility(name) });
   }
   return tokens;

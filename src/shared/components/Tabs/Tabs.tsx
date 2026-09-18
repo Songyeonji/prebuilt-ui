@@ -88,7 +88,7 @@ export function Tabs({ items, activeKey, defaultActiveKey, onChange, variant = '
               tabIndex={selected ? 0 : -1}
               disabled={item.disabled}
               className={cn(
-                'cursor-pointer text-sm font-semibold text-fg-muted transition-colors enabled:hover:text-fg',
+                'cursor-pointer text-md font-semibold text-fg-muted transition-colors enabled:hover:text-fg',
                 'disabled:cursor-not-allowed disabled:opacity-40',
                 focusRing,
                 tabClass[variant].base,

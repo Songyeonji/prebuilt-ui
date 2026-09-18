@@ -23,9 +23,9 @@ export interface ModalProps {
 }
 
 const sizeClass: Record<ModalSize, string> = {
-  sm: 'max-w-100',
-  md: 'max-w-140',
-  lg: 'max-w-200',
+  sm: 'max-w-modal-sm',
+  md: 'max-w-modal-md',
+  lg: 'max-w-modal-lg',
 };
 
 export function Modal({
@@ -89,7 +89,7 @@ export function Modal({
       >
         <div className="flex items-center gap-4 px-6 pt-5">
           {title && (
-            <h2 id={titleId} className="text-xl font-bold">
+            <h2 id={titleId} className="text-2xl font-bold">
               {title}
             </h2>
           )}
@@ -98,14 +98,14 @@ export function Modal({
             aria-label="닫기"
             onClick={onClose}
             className={cn(
-              'ml-auto grid size-8 cursor-pointer place-items-center rounded-sm text-2xl leading-none text-fg-muted hover:bg-surface-muted hover:text-fg',
+              'ml-auto grid size-8 cursor-pointer place-items-center rounded-sm text-3xl leading-none text-fg-muted hover:bg-surface-muted hover:text-fg',
               focusRing,
             )}
           >
             ×
           </button>
         </div>
-        <div className="overflow-y-auto px-6 py-4 text-sm leading-relaxed">{children}</div>
+        <div className="overflow-y-auto px-6 py-4 text-md leading-relaxed">{children}</div>
         {footer && <div className="flex justify-end gap-2 px-6 pb-5">{footer}</div>}
       </div>
     </div>,

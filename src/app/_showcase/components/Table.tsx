@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 export function Table({ head, children }: { head: string[]; children: ReactNode }) {
   return (
     <div className="overflow-x-auto rounded-md border border-border">
-      <table className="w-full border-collapse text-sm">
+      <table className="w-full border-collapse text-md">
         <thead>
           <tr>
             {head.map((h) => (
@@ -26,5 +26,5 @@ export function Table({ head, children }: { head: string[]; children: ReactNode 
 }
 
 export function Code({ children }: { children: ReactNode }) {
-  return <code className="font-mono text-[13px] font-semibold whitespace-nowrap">{children}</code>;
+  return <code className="font-mono text-sm font-semibold whitespace-nowrap">{children}</code>;
 }

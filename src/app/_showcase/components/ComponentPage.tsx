@@ -13,7 +13,7 @@ const statusVariant: Record<ComponentDoc['status'], BadgeVariant> = {
 };
 
 function H2({ children }: { children: string }) {
-  return <h2 className="mb-3 text-lg font-bold">{children}</h2>;
+  return <h2 className="mb-3 text-xl font-bold">{children}</h2>;
 }
 
 function GuideBox({ type, items }: { type: 'do' | 'dont'; items: string[] }) {
@@ -26,10 +26,10 @@ function GuideBox({ type, items }: { type: 'do' | 'dont'; items: string[] }) {
           : 'rounded-md border-t-3 border-danger bg-danger-soft px-5 py-4'
       }
     >
-      <h3 className={isDo ? 'mb-2 text-sm font-bold text-success' : 'mb-2 text-sm font-bold text-danger'}>
+      <h3 className={isDo ? 'mb-2 text-md font-bold text-success' : 'mb-2 text-md font-bold text-danger'}>
         {isDo ? '✓ Do' : "✕ Don't"}
       </h3>
-      <ul className="list-disc space-y-1 pl-4.5 text-sm leading-relaxed">
+      <ul className="list-disc space-y-1 pl-5 text-md leading-relaxed">
         {items.map((line) => (
           <li key={line}>{line}</li>
         ))}
@@ -96,16 +96,16 @@ function DesignTab({ doc }: { doc: ComponentDoc }) {
 
 export function ComponentPage({ doc }: { doc: ComponentDoc }) {
   return (
-    <article className="mx-auto max-w-230">
+    <article className="mx-auto max-w-content">
       <header className="mb-6">
         <div className="flex items-center gap-3">
-          <h1 className="text-3xl font-extrabold tracking-tight">{doc.name}</h1>
+          <h1 className="text-4xl font-extrabold tracking-tight">{doc.name}</h1>
           <Badge variant={statusVariant[doc.status]} dot>
             {doc.status}
           </Badge>
         </div>
-        <p className="mt-2 mb-4 text-base leading-relaxed text-fg-muted">{doc.summary}</p>
-        <code className="inline-block max-w-full overflow-x-auto rounded-sm bg-surface-muted px-2 py-1 font-mono text-[13px] whitespace-nowrap">
+        <p className="mt-2 mb-4 text-lg leading-relaxed text-fg-muted">{doc.summary}</p>
+        <code className="inline-block max-w-full overflow-x-auto rounded-sm bg-surface-muted px-2 py-1 font-mono text-sm whitespace-nowrap">
           {`import { ${doc.name} } from '@shared';`}
         </code>
       </header>

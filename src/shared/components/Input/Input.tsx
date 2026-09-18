@@ -17,8 +17,8 @@ export interface InputProps extends Omit<ComponentProps<'input'>, 'size'> {
 
 const sizeClass: Record<InputSize, string> = {
   sm: 'h-8 px-3 text-sm',
-  md: 'h-10 px-3 text-sm',
-  lg: 'h-12 px-4 text-base',
+  md: 'h-10 px-3 text-md',
+  lg: 'h-12 px-4 text-lg',
 };
 
 export function Input({
@@ -38,9 +38,9 @@ export function Input({
   const message = error || helperText;
 
   return (
-    <div className={cn('inline-flex w-65 max-w-full flex-col gap-1', fullWidth && 'flex w-full', className)}>
+    <div className={cn('inline-flex w-field max-w-full flex-col gap-1', fullWidth && 'flex w-full', className)}>
       {label && (
-        <label className="text-sm font-semibold text-fg" htmlFor={inputId}>
+        <label className="text-md font-semibold text-fg" htmlFor={inputId}>
           {label}
           {required && (
             <span className="ml-0.5 text-danger" aria-hidden>

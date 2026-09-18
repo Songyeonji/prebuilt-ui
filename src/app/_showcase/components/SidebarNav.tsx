@@ -27,7 +27,7 @@ export function SidebarNav({ sections }: { sections: NavSection[] }) {
                 href={item.href}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
-                  'rounded-sm px-3 py-2 text-sm font-medium whitespace-nowrap text-fg-subtle hover:bg-surface-muted',
+                  'rounded-sm px-3 py-2 text-md font-medium whitespace-nowrap text-fg-subtle hover:bg-surface-muted',
                   active && 'bg-primary-soft font-bold text-primary hover:bg-primary-soft',
                 )}
               >

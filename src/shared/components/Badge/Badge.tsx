@@ -20,7 +20,7 @@ const variantClass: Record<BadgeVariant, string> = {
 };
 
 const sizeClass: Record<BadgeSize, string> = {
-  sm: 'h-5 px-2 text-xs',
+  sm: 'h-5 px-2 text-2xs',
   md: 'h-6 px-2.5 text-xs',
 };
 

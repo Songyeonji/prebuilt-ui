@@ -37,14 +37,37 @@ src/
 
 ```css
 @theme static {
-  --color-*: initial;          /* Tailwind 기본 팔레트 제거 → 토큰 외 색상 사용 불가 */
+  --color-*: initial;          /* Tailwind 기본값 제거 → 토큰에 없는 값은 사용 불가 */
+  --text-*: initial;
+  --spacing: initial;
+  ...
   /* @group Brand */
   --color-primary: #4f46e5;    /* → bg-primary, text-primary, ring-primary/35 ... */
-  --radius-md: 8px;            /* → rounded-md */
+  /* @group Font Size */
+  --text-md: 14px;             /* → text-md */
+  --text-md--line-height: 20px;
+  /* @group Spacing */
+  --spacing-4: 16px;           /* → p-4, gap-4, h-4, size-4 ... */
+  --spacing-1_5: 6px;          /* → p-1.5  (소수 키는 _ 로 작성) */
+  /* @group Container */
+  --container-content: 920px;  /* → max-w-content, w-content */
 }
 ```
 
+| 그룹 | 예시 클래스 |
+| --- | --- |
+| Color | `bg-primary` `text-fg-muted` `border-border` |
+| Font Family | `font-sans` (Pretendard) `font-mono` |
+| Font Size | `text-2xs`(11) `text-xs`(12) `text-sm`(13) `text-md`(14) `text-lg`(16) `text-xl`(18) `text-2xl`(20) `text-3xl`(24) `text-4xl`(32) |
+| Font Weight | `font-regular` `font-medium` `font-semibold` `font-bold` `font-extrabold` |
+| Line Height / Letter Spacing | `leading-tight/normal/relaxed` `tracking-tight/normal/wide` |
+| Spacing (4px 그리드) | `0` `0.5` `1` `1.5` `2` `2.5` `3` `4` `5` `6` `7` `8` `10` `12` `16` `20` |
+| Container | `max-w-field` `w-sidebar` `max-w-modal-sm/md/lg` `max-w-content` |
+| Radius / Shadow | `rounded-sm/md/lg` `shadow-sm/lg` |
+
+- 폰트는 **Pretendard** 가변 폰트(`pretendard` npm 패키지)를 `next/font/local` 로 셀프 호스팅합니다 (`app/layout.tsx`).
 - 토큰을 추가하면 바로 Tailwind 유틸리티로 쓸 수 있고, `/tokens` 페이지에 자동으로 나타납니다.
+- ⚠️ 토큰에 없는 클래스(`text-base`, `p-4.5`, `bg-blue-500` 등)는 Tailwind 가 **에러 없이 무시**합니다. 스타일이 안 먹으면 `/tokens` 에 있는 값인지 먼저 확인하세요.
 - `/* @group 이름 */` 주석으로 `/tokens` 페이지의 그룹을 나눕니다.
 - 컴포넌트에는 `.css` 파일을 만들지 않고 Tailwind 클래스만 사용합니다.
 

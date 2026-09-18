@@ -27,7 +27,7 @@ export function CodeBlock({ code, className }: { code: string; className?: strin
       </button>
       <pre
         className={cn(
-          'overflow-x-auto rounded-md bg-code px-5 py-4 font-mono text-[13px] leading-relaxed text-code-fg',
+          'overflow-x-auto rounded-md bg-code px-5 py-4 font-mono text-sm leading-relaxed text-code-fg',
           className,
         )}
       >
