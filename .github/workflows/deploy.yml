@@ -56,12 +56,27 @@ jobs:
           api /v2/teams | jq -r '.teams[]? | "  - \(.name) (\(.slug))  id=\(.id)"'
           echo "사용하려는 ORG_ID: $VERCEL_ORG_ID / PROJECT_ID: $VERCEL_PROJECT_ID"
 
+          # vercel CLI 는 pull/deploy 때 "팀 조회"와 "프로젝트 조회"를 둘 다 하고, 둘 중 하나라도 403 이면
+          # "Could not retrieve Project Settings" 로 실패합니다 → 두 가지를 모두 확인
+          fail=0
+          team=$(api "/v2/teams/$VERCEL_ORG_ID")
+          if echo "$team" | jq -e '.id' > /dev/null; then
+            echo "✅ 팀 조회: $(echo "$team" | jq -r '.name + " (" + .slug + ")"')"
+          else
+            echo "::error::팀 조회 실패 → $(echo "$team" | jq -r '(.error.code // "") + ": " + (.error.message // "")')"
+            fail=1
+          fi
+
           res=$(api "/v9/projects/$VERCEL_PROJECT_ID?teamId=$VERCEL_ORG_ID")
           if echo "$res" | jq -e '.id' > /dev/null; then
-            echo "✅ 프로젝트 확인: $(echo "$res" | jq -r '.name')"
+            echo "✅ 프로젝트 조회: $(echo "$res" | jq -r '.name')"
           else
-            echo "::error::프로젝트에 접근할 수 없습니다 → $(echo "$res" | jq -r '(.error.code // "") + ": " + (.error.message // "")')"
-            echo "::error::토큰 Scope 가 ORG_ID 팀(위 목록에 있어야 함)인지 확인하고, 아니면 그 팀 Scope 로 토큰을 새로 발급하세요."
+            echo "::error::프로젝트 조회 실패 → $(echo "$res" | jq -r '(.error.code // "") + ": " + (.error.message // "")')"
+            fail=1
+          fi
+
+          if [ "$fail" = 1 ]; then
+            echo "::error::토큰이 이 팀에 권한이 없습니다. vercel.com/account/tokens 에서 Scope 를 이 팀으로 선택해 토큰을 새로 만들고 VERCEL_TOKEN 만 교체하세요."
             exit 1
           fi
 
