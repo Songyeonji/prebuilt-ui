@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import type { ReactNode } from 'react';
-import { version } from '../../package.json';
+import { PACKAGE_VERSION } from './_showcase/package-info';
 import { AppShell, type NavSection } from './_showcase/components/AppShell';
 import { componentDocs } from './_showcase/registry';
 import './globals.css';
@@ -50,7 +50,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ko" className={pretendard.variable}>
       <body className="min-h-screen bg-surface font-sans text-fg antialiased">
-        <AppShell sections={sections} version={version} repoUrl={REPO_URL}>
+        <AppShell sections={sections} version={PACKAGE_VERSION} repoUrl={REPO_URL}>
           {children}
         </AppShell>
       </body>

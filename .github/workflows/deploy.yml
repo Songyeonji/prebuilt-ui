@@ -36,6 +36,30 @@ jobs:
       - name: Install
         run: npm ci
 
+      # 토큰/팀/프로젝트 조합이 맞는지 먼저 확인하고, 틀리면 무엇이 틀렸는지 로그에 남깁니다.
+      - name: Verify Vercel access
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          api() { curl -s -H "Authorization: Bearer $VERCEL_TOKEN" "https://api.vercel.com$1"; }
+          for name in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
+            if [ -z "${!name}" ]; then echo "::error::GitHub Secret '$name' 이 비어 있습니다."; exit 1; fi
+          done
+
+          user=$(api /v2/user | jq -r '.user.username // .error.message')
+          echo "토큰 소유자: $user"
+          echo "이 토큰으로 접근 가능한 팀:"
+          api /v2/teams | jq -r '.teams[]? | "  - \(.name) (\(.slug))  id=\(.id)"'
+
+          res=$(api "/v9/projects/$VERCEL_PROJECT_ID?teamId=$VERCEL_ORG_ID")
+          if echo "$res" | jq -e '.id' > /dev/null; then
+            echo "✅ 프로젝트 확인: $(echo "$res" | jq -r '.name') (team: $VERCEL_ORG_ID)"
+          else
+            echo "::error::프로젝트에 접근할 수 없습니다 → $(echo "$res" | jq -r '.error.code + ": " + .error.message')"
+            echo "::error::VERCEL_ORG_ID 가 위 '접근 가능한 팀' 목록의 id 중 프로젝트가 속한 팀과 같은지, 토큰 Scope 가 그 팀인지 확인하세요."
+            exit 1
+          fi
+
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 

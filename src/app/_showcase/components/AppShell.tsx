@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { Badge, Button, Input, cn } from '@shared';
+import { Badge, Button, Input } from '@shared';
+import { cn } from '@shared/utils';
 
 export interface NavItem {
   href: string;

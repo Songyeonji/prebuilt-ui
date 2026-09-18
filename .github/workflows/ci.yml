@@ -1,4 +1,4 @@
-# PR 이 열리거나 업데이트되면 타입 체크 + 빌드가 통과하는지 확인합니다.
+# PR 이 열리거나 업데이트되면 문서 사이트 빌드 + 라이브러리 빌드가 통과하는지 확인합니다.
 name: CI
 
 on:
@@ -15,4 +15,9 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - run: npm run build
+      - name: Build docs (Next.js, 타입 체크 포함)
+        run: npm run build
+      - name: Build library
+        run: npm run build:lib
+      - name: Check package contents
+        run: npm pack -w @songyeonji/prebuilt-ui --dry-run

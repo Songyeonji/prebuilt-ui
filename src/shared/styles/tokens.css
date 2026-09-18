@@ -65,10 +65,18 @@
   --color-border: #e4e4e7;
   --color-border-strong: #d4d4d8;
 
-  /* @group Code */
-  --color-code: #1c1c1f;
-  --color-code-fg: #e4e4e7;
-  --color-code-border: #3f3f46;
+  /* @group Syntax */
+  /* 코드 블록 하이라이팅 (GitHub 마크다운 코드와 같은 계열) — _showcase/highlight.ts 의 테마가 참조 */
+  --color-syntax-bg: #f6f8fa;
+  --color-syntax-fg: #1f2328;
+  --color-syntax-comment: #6e7781;
+  --color-syntax-keyword: #cf222e;
+  --color-syntax-string: #0a3069;
+  --color-syntax-tag: #116329;
+  --color-syntax-attribute: #0550ae;
+  --color-syntax-function: #8250df;
+  --color-syntax-constant: #0550ae;
+  --color-syntax-type: #953800;
 
   /* ───────────── Typography ───────────── */
 

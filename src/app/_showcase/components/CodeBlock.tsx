@@ -1,38 +1,45 @@
-'use client';
+import { cn } from '@shared/utils';
+import { highlight, type CodeLang } from '../highlight';
+import { CopyButton } from './CopyButton';
 
-import { useState } from 'react';
-import { cn } from '@shared';
+interface CodeBlockProps {
+  code: string;
+  lang?: CodeLang;
+  /** 헤더에 언어 대신 표시할 이름 (예: 파일명) */
+  title?: string;
+  /** 카드 안에 붙여 넣을 때: 바깥 테두리/모서리 제거 */
+  flush?: boolean;
+  className?: string;
+}
 
-export function CodeBlock({ code, className }: { code: string; className?: string }) {
-  const [copied, setCopied] = useState(false);
-
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(code.trim());
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch {
-      /* clipboard 권한이 없으면 무시 */
-    }
-  };
+/**
+ * GitHub 마크다운 코드 블록 스타일.
+ * 하이라이팅은 서버(빌드 시)에서 끝나므로 브라우저에는 색칠된 HTML 만 전달됩니다.
+ */
+export async function CodeBlock({ code, lang = 'tsx', title, flush = false, className }: CodeBlockProps) {
+  const source = code.trim();
+  const html = await highlight(source, lang);
 
   return (
-    <div className="relative">
-      <button
-        type="button"
-        onClick={copy}
-        className="absolute top-2 right-2 cursor-pointer rounded-sm border border-code-border bg-code px-2 py-1 text-xs text-code-fg hover:text-fg-inverse"
-      >
-        {copied ? '복사됨' : '복사'}
-      </button>
-      <pre
+    <div
+      className={cn(
+        'overflow-hidden bg-syntax-bg',
+        flush ? 'border-t border-border' : 'rounded-md border border-border',
+        className,
+      )}
+    >
+      <div className="flex h-9 items-center justify-between border-b border-border pr-1.5 pl-4">
+        <span className="font-mono text-xs text-fg-muted">{title ?? lang}</span>
+        <CopyButton text={source} />
+      </div>
+      <div
         className={cn(
-          'overflow-x-auto rounded-md bg-code px-5 py-4 font-mono text-sm leading-relaxed text-code-fg',
-          className,
+          'overflow-x-auto font-mono text-sm leading-relaxed',
+          '[&_pre]:w-fit [&_pre]:min-w-full [&_pre]:px-4 [&_pre]:py-3.5 [&_pre]:outline-none',
+          '[&_pre]:focus-visible:outline-2 [&_pre]:focus-visible:-outline-offset-2 [&_pre]:focus-visible:outline-accent',
         )}
-      >
-        <code>{code.trim()}</code>
-      </pre>
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
     </div>
   );
 }

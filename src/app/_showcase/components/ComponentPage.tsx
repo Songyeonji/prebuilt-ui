@@ -1,9 +1,11 @@
 import { Badge, Tabs, type BadgeVariant } from '@shared';
+import { PACKAGE_NAME, toPublicImports } from '../package-info';
 import { getDesignTokens } from '../tokens';
 import type { ComponentDoc } from '../types';
 import { CodeBlock } from './CodeBlock';
 import { ExampleCard } from './ExampleCard';
 import { PropsTable } from './PropsTable';
+import { SourceTab } from './SourceTab';
 import { TokenTable } from './TokenTable';
 
 const statusVariant: Record<ComponentDoc['status'], BadgeVariant> = {
@@ -54,7 +56,7 @@ function OverviewTab({ doc }: { doc: ComponentDoc }) {
 
       <section>
         <H2>사용법</H2>
-        <CodeBlock code={doc.usage} />
+        <CodeBlock code={toPublicImports(doc.usage)} />
       </section>
 
       <section>
@@ -74,7 +76,12 @@ function DesignTab({ doc }: { doc: ComponentDoc }) {
   return (
     <div className="flex flex-col gap-8">
       {doc.examples.map((example) => (
-        <ExampleCard key={example.title} title={example.title} description={example.description} code={example.code}>
+        <ExampleCard
+          key={example.title}
+          title={example.title}
+          description={example.description}
+          codeBlock={<CodeBlock code={toPublicImports(example.code)} flush />}
+        >
           {example.render()}
         </ExampleCard>
       ))}
@@ -101,7 +108,7 @@ export function ComponentPage({ doc }: { doc: ComponentDoc }) {
         </div>
         <p className="mt-2 mb-4 text-md leading-relaxed text-fg-muted sm:text-lg">{doc.summary}</p>
         <code className="inline-block max-w-full overflow-x-auto rounded-sm bg-surface-muted px-2 py-1 font-mono text-sm whitespace-nowrap">
-          {`import { ${doc.name} } from '@shared';`}
+          {`import { ${doc.name} } from '${PACKAGE_NAME}';`}
         </code>
       </header>
 
@@ -109,6 +116,7 @@ export function ComponentPage({ doc }: { doc: ComponentDoc }) {
         items={[
           { key: 'overview', label: '설명', content: <OverviewTab doc={doc} /> },
           { key: 'design', label: '디자인', content: <DesignTab doc={doc} /> },
+          { key: 'code', label: '코드', content: <SourceTab doc={doc} /> },
         ]}
       />
     </article>
