@@ -23,7 +23,7 @@ import { Button } from '@shared';
 </Button>`,
   props: [
     { name: 'variant', type: "'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'", default: "'primary'", description: '버튼 스타일' },
-    { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", description: '버튼 높이 (32 / 40 / 48px)' },
+    { name: 'size', type: "'xs' | 'sm' | 'md' | 'lg' | 'xl'", default: "'md'", description: '높이 28 / 32 / 36 / 40 / 48px — Input 과 같은 높이 체계' },
     { name: 'loading', type: 'boolean', default: 'false', description: '스피너를 표시하고 클릭을 비활성화' },
     { name: 'fullWidth', type: 'boolean', default: 'false', description: '부모 너비를 가득 채움' },
     { name: 'leftIcon', type: 'ReactNode', description: '라벨 왼쪽 아이콘' },
@@ -54,15 +54,19 @@ import { Button } from '@shared';
       title: 'Sizes',
       render: () => (
         <>
+          <Button size="xs">XSmall</Button>
           <Button size="sm">Small</Button>
           <Button size="md">Medium</Button>
           <Button size="lg">Large</Button>
+          <Button size="xl">XLarge</Button>
         </>
       ),
       code: `
+<Button size="xs">XSmall</Button>
 <Button size="sm">Small</Button>
 <Button size="md">Medium</Button>
-<Button size="lg">Large</Button>`,
+<Button size="lg">Large</Button>
+<Button size="xl">XLarge</Button>`,
     },
     {
       title: 'States',
@@ -71,7 +75,7 @@ import { Button } from '@shared';
         <>
           <Button loading>저장 중</Button>
           <Button disabled>Disabled</Button>
-          <Button variant="outline" leftIcon={<span aria-hidden>＋</span>}>
+          <Button variant="outline" leftIcon={<svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden><path d="M8 3v10M3 8h10" strokeLinecap="round" /></svg>}>
             아이콘
           </Button>
         </>
@@ -82,7 +86,7 @@ import { Button } from '@shared';
 <Button variant="outline" leftIcon={<PlusIcon />}>아이콘</Button>`,
     },
   ],
-  tokens: ['--color-primary', '--color-primary-hover', '--color-primary-soft', '--color-danger', '--color-danger-hover', '--radius-md'],
+  tokens: ['--color-primary', '--color-primary-hover', '--color-primary-soft', '--color-danger', '--color-accent', '--radius-xs', '--radius-sm', '--radius-md', '--shadow-xs'],
 };
 
 export default doc;

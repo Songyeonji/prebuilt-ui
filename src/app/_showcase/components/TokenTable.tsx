@@ -36,14 +36,14 @@ function Preview({ token }: { token: DesignToken }) {
       );
     case 'leading':
       return (
-        <span className="block w-20 bg-primary-soft text-xs" style={{ lineHeight: v }}>
+        <span className="block w-20 bg-surface-muted text-xs" style={{ lineHeight: v }}>
           줄 간격 예시 텍스트
         </span>
       );
     case 'spacing':
-      return <span className="block h-3 rounded-sm bg-primary" style={{ width: v }} />;
+      return <span className="block h-3 rounded-xs bg-accent" style={{ width: v }} />;
     case 'radius':
-      return <span className="block size-8 border-2 border-primary bg-primary-soft" style={{ borderRadius: v }} />;
+      return <span className="block size-8 border border-border-strong bg-surface-muted" style={{ borderRadius: v }} />;
     case 'shadow':
       return <span className="block size-8 rounded-md bg-surface" style={{ boxShadow: v }} />;
     default:
@@ -63,7 +63,7 @@ export function TokenTable({ tokens }: { tokens: DesignToken[] }) {
             <Code>{token.name}</Code>
           </td>
           <td>
-            <code className="font-mono text-xs text-code-accent">{token.utility}</code>
+            <code className="font-mono text-xs text-fg-muted">{token.utility}</code>
           </td>
           <td className="max-w-field font-mono text-xs break-all text-fg-muted">{token.value}</td>
         </tr>

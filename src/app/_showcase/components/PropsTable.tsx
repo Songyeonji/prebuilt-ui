@@ -11,7 +11,7 @@ export function PropsTable({ props }: { props: PropDoc[] }) {
             {p.required && <span className="ml-1 text-xs font-bold text-danger">필수</span>}
           </td>
           <td>
-            <code className="font-mono text-xs text-code-accent">{p.type}</code>
+            <code className="font-mono text-xs break-words text-accent">{p.type}</code>
           </td>
           <td>{p.default ? <Code>{p.default}</Code> : '—'}</td>
           <td>{p.description}</td>

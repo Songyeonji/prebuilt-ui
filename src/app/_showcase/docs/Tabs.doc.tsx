@@ -37,6 +37,7 @@ import { Tabs } from '@shared';
     { name: 'defaultActiveKey', type: 'string', default: '첫 번째 탭', description: '비제어 모드 초기 탭' },
     { name: 'onChange', type: '(key: string) => void', description: '탭 변경 콜백' },
     { name: 'variant', type: "'line' | 'pill'", default: "'line'", description: '탭 스타일' },
+    { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", description: '탭 크기' },
   ],
   examples: [
     {
@@ -57,8 +58,28 @@ import { Tabs } from '@shared';
       ),
       code: `<Tabs items={items} variant="pill" />`,
     },
+    {
+      title: 'Sizes',
+      render: () => (
+        <div className="flex w-full flex-col gap-6">
+          <Tabs items={sampleItems} size="sm" />
+          <Tabs items={sampleItems} size="md" />
+          <Tabs items={sampleItems} size="lg" />
+          <div className="flex flex-wrap items-start gap-3">
+            <Tabs items={sampleItems.slice(0, 3)} variant="pill" size="sm" />
+            <Tabs items={sampleItems.slice(0, 3)} variant="pill" size="md" />
+            <Tabs items={sampleItems.slice(0, 3)} variant="pill" size="lg" />
+          </div>
+        </div>
+      ),
+      code: `
+<Tabs items={items} size="sm" />
+<Tabs items={items} size="md" />
+<Tabs items={items} size="lg" />
+<Tabs items={items} variant="pill" size="sm" />`,
+    },
   ],
-  tokens: ['--color-primary', '--color-surface-muted', '--color-border', '--radius-sm', '--shadow-sm'],
+  tokens: ['--color-primary', '--color-fg-muted', '--color-surface-muted', '--color-border', '--radius-sm', '--shadow-sm'],
 };
 
 export default doc;

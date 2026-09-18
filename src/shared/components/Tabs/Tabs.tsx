@@ -12,6 +12,7 @@ export interface TabItem {
 }
 
 export type TabsVariant = 'line' | 'pill';
+export type TabsSize = 'sm' | 'md' | 'lg';
 
 export interface TabsProps {
   items: TabItem[];
@@ -21,26 +22,48 @@ export interface TabsProps {
   defaultActiveKey?: string;
   onChange?: (key: string) => void;
   variant?: TabsVariant;
+  size?: TabsSize;
   className?: string;
 }
 
 const listClass: Record<TabsVariant, string> = {
-  line: 'flex gap-1 border-b border-border',
-  pill: 'inline-flex gap-1 rounded-md bg-surface-muted p-1',
+  line: 'flex gap-4 border-b border-border',
+  pill: 'inline-flex gap-0.5 rounded-md border border-border bg-surface-muted p-0.5',
 };
 
 const tabClass: Record<TabsVariant, { base: string; active: string }> = {
   line: {
-    base: '-mb-px border-b-2 border-transparent px-4 py-3',
-    active: 'border-primary text-primary enabled:hover:text-primary',
+    base: '-mb-px border-b-2 border-transparent',
+    active: 'border-primary text-fg',
   },
   pill: {
-    base: 'rounded-sm px-4 py-2',
+    base: 'rounded-sm',
     active: 'bg-surface text-fg shadow-sm',
   },
 };
 
-export function Tabs({ items, activeKey, defaultActiveKey, onChange, variant = 'line', className }: TabsProps) {
+const sizeClass: Record<TabsVariant, Record<TabsSize, string>> = {
+  line: {
+    sm: 'py-2 text-sm',
+    md: 'py-2.5 text-md',
+    lg: 'py-3 text-lg',
+  },
+  pill: {
+    sm: 'h-7 px-2.5 text-sm',
+    md: 'h-8 px-3 text-md',
+    lg: 'h-9 px-3.5 text-md',
+  },
+};
+
+export function Tabs({
+  items,
+  activeKey,
+  defaultActiveKey,
+  onChange,
+  variant = 'line',
+  size = 'md',
+  className,
+}: TabsProps) {
   const baseId = useId();
   const [innerKey, setInnerKey] = useState(defaultActiveKey ?? items[0]?.key);
   const currentKey = activeKey ?? innerKey;
@@ -88,10 +111,11 @@ export function Tabs({ items, activeKey, defaultActiveKey, onChange, variant = '
               tabIndex={selected ? 0 : -1}
               disabled={item.disabled}
               className={cn(
-                'cursor-pointer text-md font-semibold text-fg-muted transition-colors enabled:hover:text-fg',
+                'cursor-pointer font-medium text-fg-muted transition-colors duration-100 enabled:hover:text-fg',
                 'disabled:cursor-not-allowed disabled:opacity-40',
                 focusRing,
                 tabClass[variant].base,
+                sizeClass[variant][size],
                 selected && tabClass[variant].active,
               )}
               onClick={() => select(item.key)}

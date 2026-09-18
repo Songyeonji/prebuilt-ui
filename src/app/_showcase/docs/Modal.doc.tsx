@@ -34,7 +34,7 @@ const [open, setOpen] = useState(false);
     { name: 'onClose', type: '() => void', required: true, description: '닫기 요청 (X, ESC, 바깥 클릭)' },
     { name: 'title', type: 'ReactNode', description: '상단 제목 (aria-labelledby 로 연결)' },
     { name: 'footer', type: 'ReactNode', description: '하단 버튼 영역' },
-    { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", description: '최대 너비 (400 / 560 / 800px)' },
+    { name: 'size', type: "'sm' | 'md' | 'lg' | 'xl' | 'full'", default: "'md'", description: '최대 너비 400 / 560 / 800 / 1040px, full 은 화면 가득' },
     { name: 'closeOnOverlayClick', type: 'boolean', default: 'true', description: '바깥 클릭 시 닫기' },
     { name: 'closeOnEsc', type: 'boolean', default: 'true', description: 'ESC 키로 닫기' },
   ],
@@ -47,6 +47,8 @@ const [open, setOpen] = useState(false);
           <ModalDemo size="sm" />
           <ModalDemo size="md" />
           <ModalDemo size="lg" />
+          <ModalDemo size="xl" />
+          <ModalDemo size="full" />
         </>
       ),
       code: `<Modal open={open} onClose={close} size="sm" title="모달 제목">...</Modal>`,
@@ -71,7 +73,7 @@ const [open, setOpen] = useState(false);
 </Modal>`,
     },
   ],
-  tokens: ['--color-overlay', '--color-surface', '--radius-lg', '--shadow-lg', '--animate-pop-in'],
+  tokens: ['--color-overlay', '--color-surface', '--color-surface-subtle', '--radius-lg', '--shadow-lg', '--animate-pop-in'],
 };
 
 export default doc;

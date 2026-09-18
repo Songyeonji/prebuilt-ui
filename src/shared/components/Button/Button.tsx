@@ -2,10 +2,10 @@
 
 import type { ComponentProps, ReactNode } from 'react';
 import { cn } from '../../utils/cn';
-import { focusRing } from '../../utils/styles';
+import { controlHeight, focusRing, type ControlSize } from '../../utils/styles';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
-export type ButtonSize = 'sm' | 'md' | 'lg';
+export type ButtonSize = ControlSize;
 
 export interface ButtonProps extends ComponentProps<'button'> {
   variant?: ButtonVariant;
@@ -19,17 +19,19 @@ export interface ButtonProps extends ComponentProps<'button'> {
 }
 
 const variantClass: Record<ButtonVariant, string> = {
-  primary: 'bg-primary text-fg-inverse enabled:hover:bg-primary-hover',
-  secondary: 'bg-primary-soft text-primary enabled:hover:bg-primary-soft-hover',
-  outline: 'border-border-strong bg-surface text-fg enabled:hover:bg-surface-subtle',
-  ghost: 'bg-transparent text-fg enabled:hover:bg-surface-muted',
-  danger: 'bg-danger text-fg-inverse enabled:hover:bg-danger-hover',
+  primary: 'bg-primary text-fg-inverse shadow-xs enabled:hover:bg-primary-hover',
+  secondary: 'bg-primary-soft text-fg enabled:hover:bg-primary-soft-hover',
+  outline: 'border-border-strong bg-surface text-fg shadow-xs enabled:hover:bg-surface-subtle',
+  ghost: 'bg-transparent text-fg-subtle enabled:hover:bg-surface-muted enabled:hover:text-fg',
+  danger: 'bg-danger text-fg-inverse shadow-xs enabled:hover:bg-danger-hover',
 };
 
 const sizeClass: Record<ButtonSize, string> = {
-  sm: 'h-8 px-3 text-sm',
-  md: 'h-10 px-4 text-md',
-  lg: 'h-12 px-5 text-lg',
+  xs: 'gap-1 rounded-xs px-2 text-xs',
+  sm: 'gap-1.5 rounded-sm px-2.5 text-sm',
+  md: 'gap-2 rounded-sm px-3.5 text-md',
+  lg: 'gap-2 rounded-md px-4 text-md',
+  xl: 'gap-2.5 rounded-md px-5 text-lg',
 };
 
 export function Button({
@@ -49,13 +51,14 @@ export function Button({
     <button
       type={type}
       className={cn(
-        'inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border border-transparent font-semibold leading-none transition-colors',
+        'inline-flex cursor-pointer items-center justify-center border border-transparent font-medium whitespace-nowrap transition-colors duration-100',
         'disabled:cursor-not-allowed disabled:opacity-50',
         focusRing,
         variantClass[variant],
+        controlHeight[size],
         sizeClass[size],
         fullWidth && 'w-full',
-        loading && 'disabled:opacity-80',
+        loading && 'disabled:opacity-70',
         className,
       )}
       disabled={disabled || loading}

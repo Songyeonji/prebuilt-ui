@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 import { cn } from '../../utils/cn';
 import { focusRing } from '../../utils/styles';
 
-export type ModalSize = 'sm' | 'md' | 'lg';
+export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
 
 export interface ModalProps {
   open: boolean;
@@ -26,6 +26,8 @@ const sizeClass: Record<ModalSize, string> = {
   sm: 'max-w-modal-sm',
   md: 'max-w-modal-md',
   lg: 'max-w-modal-lg',
+  xl: 'max-w-modal-xl',
+  full: 'h-full max-w-none',
 };
 
 export function Modal({
@@ -82,14 +84,14 @@ export function Modal({
         aria-labelledby={title ? titleId : undefined}
         tabIndex={-1}
         className={cn(
-          'flex max-h-[calc(100vh-2rem)] w-full animate-pop-in flex-col rounded-lg bg-surface text-fg shadow-lg outline-none',
+          'flex max-h-full w-full animate-pop-in flex-col overflow-hidden rounded-lg bg-surface text-fg shadow-lg outline-none',
           sizeClass[size],
           className,
         )}
       >
-        <div className="flex items-center gap-4 px-6 pt-5">
+        <div className="flex items-center gap-4 py-4 pr-4 pl-6">
           {title && (
-            <h2 id={titleId} className="text-2xl font-bold">
+            <h2 id={titleId} className="text-xl font-semibold tracking-tight">
               {title}
             </h2>
           )}
@@ -98,15 +100,19 @@ export function Modal({
             aria-label="닫기"
             onClick={onClose}
             className={cn(
-              'ml-auto grid size-8 cursor-pointer place-items-center rounded-sm text-3xl leading-none text-fg-muted hover:bg-surface-muted hover:text-fg',
+              '-my-1 ml-auto grid size-8 cursor-pointer place-items-center rounded-sm text-fg-muted transition-colors hover:bg-surface-muted hover:text-fg',
               focusRing,
             )}
           >
-            ×
+            <svg viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
+              <path d="M4 4l8 8M12 4l-8 8" strokeLinecap="round" />
+            </svg>
           </button>
         </div>
-        <div className="overflow-y-auto px-6 py-4 text-md leading-relaxed">{children}</div>
-        {footer && <div className="flex justify-end gap-2 px-6 pb-5">{footer}</div>}
+        <div className="flex-1 overflow-y-auto px-6 pb-6 text-md leading-relaxed text-fg-subtle">{children}</div>
+        {footer && (
+          <div className="flex justify-end gap-2 border-t border-border bg-surface-subtle px-6 py-3">{footer}</div>
+        )}
       </div>
     </div>,
     document.body,

@@ -1,8 +1,8 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
-import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { SidebarNav, type NavSection } from './_showcase/components/SidebarNav';
+import { version } from '../../package.json';
+import { AppShell, type NavSection } from './_showcase/components/AppShell';
 import { componentDocs } from './_showcase/registry';
 import './globals.css';
 
@@ -19,6 +19,14 @@ export const metadata: Metadata = {
   description: '직접 만드는 React 공통 컴포넌트 라이브러리',
 };
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#ffffff',
+};
+
+const REPO_URL = 'https://github.com/Songyeonji/prebuilt-ui';
+
 const sections: NavSection[] = [
   {
     title: '시작하기',
@@ -29,24 +37,22 @@ const sections: NavSection[] = [
   },
   {
     title: 'Components',
-    items: componentDocs.map((doc) => ({ href: `/components/${doc.slug}`, label: doc.name })),
+    showCount: true,
+    items: componentDocs.map((doc) => ({
+      href: `/components/${doc.slug}`,
+      label: doc.name,
+      tag: doc.status === 'stable' ? undefined : doc.status,
+    })),
   },
 ];
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ko" className={pretendard.variable}>
-      <body className="bg-surface font-sans text-fg antialiased">
-        <div className="flex min-h-screen flex-col md:flex-row">
-          <aside className="border-b border-border bg-surface-subtle p-4 md:sticky md:top-0 md:h-screen md:w-sidebar md:shrink-0 md:overflow-y-auto md:border-r md:border-b-0 md:px-4 md:py-6">
-            <Link href="/" className="mb-3 flex items-center gap-2 px-2 text-lg font-extrabold md:mb-0">
-              <span className="grid size-7 place-items-center rounded-md bg-primary text-md text-fg-inverse">P</span>
-              Prebuilt UI
-            </Link>
-            <SidebarNav sections={sections} />
-          </aside>
-          <main className="min-w-0 flex-1 px-4 pt-6 pb-12 md:px-8 md:pt-12 md:pb-20">{children}</main>
-        </div>
+      <body className="min-h-screen bg-surface font-sans text-fg antialiased">
+        <AppShell sections={sections} version={version} repoUrl={REPO_URL}>
+          {children}
+        </AppShell>
       </body>
     </html>
   );

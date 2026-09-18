@@ -42,7 +42,7 @@ src/
   --spacing: initial;
   ...
   /* @group Brand */
-  --color-primary: #4f46e5;    /* → bg-primary, text-primary, ring-primary/35 ... */
+  --color-primary: #18181b;    /* → bg-primary, text-primary, border-primary ... */
   /* @group Font Size */
   --text-md: 14px;             /* → text-md */
   --text-md--line-height: 20px;
@@ -56,14 +56,14 @@ src/
 
 | 그룹 | 예시 클래스 |
 | --- | --- |
-| Color | `bg-primary` `text-fg-muted` `border-border` |
+| Color | `bg-primary`(잉크) `text-accent`(포인트) `text-fg-muted` `border-border` |
 | Font Family | `font-sans` (Pretendard) `font-mono` |
 | Font Size | `text-2xs`(11) `text-xs`(12) `text-sm`(13) `text-md`(14) `text-lg`(16) `text-xl`(18) `text-2xl`(20) `text-3xl`(24) `text-4xl`(32) |
 | Font Weight | `font-regular` `font-medium` `font-semibold` `font-bold` `font-extrabold` |
 | Line Height / Letter Spacing | `leading-tight/normal/relaxed` `tracking-tight/normal/wide` |
-| Spacing (4px 그리드) | `0` `0.5` `1` `1.5` `2` `2.5` `3` `4` `5` `6` `7` `8` `10` `12` `16` `20` |
-| Container | `max-w-field` `w-sidebar` `max-w-modal-sm/md/lg` `max-w-content` |
-| Radius / Shadow | `rounded-sm/md/lg` `shadow-sm/lg` |
+| Spacing (4px 그리드) | `0` `0.5` `1` `1.5` `2` `2.5` `3` `3.5` `4` `5` `6` `7` `8` `9` `10` `12` `16` `20` |
+| Container | `max-w-field` `w-sidebar` `max-w-modal-sm/md/lg/xl` `max-w-content` |
+| Radius / Shadow | `rounded-xs/sm/md/lg` `shadow-xs/sm/md/lg` |
 
 - 폰트는 **Pretendard** 가변 폰트(`pretendard` npm 패키지)를 `next/font/local` 로 셀프 호스팅합니다 (`app/layout.tsx`).
 - 토큰을 추가하면 바로 Tailwind 유틸리티로 쓸 수 있고, `/tokens` 페이지에 자동으로 나타납니다.

@@ -16,8 +16,9 @@ import { Badge } from '@shared';
 
 <Badge variant="success" dot>결제 완료</Badge>`,
   props: [
-    { name: 'variant', type: "'neutral' | 'primary' | 'success' | 'warning' | 'danger'", default: "'neutral'", description: '색상' },
-    { name: 'size', type: "'sm' | 'md'", default: "'md'", description: '크기 (20 / 24px)' },
+    { name: 'variant', type: "'neutral' | 'accent' | 'success' | 'warning' | 'danger' | 'solid'", default: "'neutral'", description: '색상' },
+    { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", description: '높이 20 / 24 / 28px' },
+    { name: 'shape', type: "'square' | 'pill'", default: "'square'", description: '각진 라벨 / 알약 모양' },
     { name: 'dot', type: 'boolean', default: 'false', description: '텍스트 앞 상태 점 표시' },
     { name: '...rest', type: 'HTMLAttributes<HTMLSpanElement>', description: '기본 span 속성' },
   ],
@@ -27,18 +28,20 @@ import { Badge } from '@shared';
       render: () => (
         <>
           <Badge>Neutral</Badge>
-          <Badge variant="primary">Primary</Badge>
+          <Badge variant="accent">Accent</Badge>
           <Badge variant="success">Success</Badge>
           <Badge variant="warning">Warning</Badge>
           <Badge variant="danger">Danger</Badge>
+          <Badge variant="solid">Solid</Badge>
         </>
       ),
       code: `
 <Badge>Neutral</Badge>
-<Badge variant="primary">Primary</Badge>
+<Badge variant="accent">Accent</Badge>
 <Badge variant="success">Success</Badge>
 <Badge variant="warning">Warning</Badge>
-<Badge variant="danger">Danger</Badge>`,
+<Badge variant="danger">Danger</Badge>
+<Badge variant="solid">Solid</Badge>`,
     },
     {
       title: 'With dot',
@@ -64,20 +67,36 @@ import { Badge } from '@shared';
       title: 'Sizes',
       render: () => (
         <>
-          <Badge size="sm" variant="primary">
-            Small
+          <Badge size="sm">Small</Badge>
+          <Badge size="md">Medium</Badge>
+          <Badge size="lg">Large</Badge>
+        </>
+      ),
+      code: `
+<Badge size="sm">Small</Badge>
+<Badge size="md">Medium</Badge>
+<Badge size="lg">Large</Badge>`,
+    },
+    {
+      title: 'Shape',
+      render: () => (
+        <>
+          <Badge variant="accent">Square</Badge>
+          <Badge variant="accent" shape="pill">
+            Pill
           </Badge>
-          <Badge size="md" variant="primary">
-            Medium
+          <Badge variant="success" shape="pill" dot>
+            Active
           </Badge>
         </>
       ),
       code: `
-<Badge size="sm" variant="primary">Small</Badge>
-<Badge size="md" variant="primary">Medium</Badge>`,
+<Badge variant="accent">Square</Badge>
+<Badge variant="accent" shape="pill">Pill</Badge>
+<Badge variant="success" shape="pill" dot>Active</Badge>`,
     },
   ],
-  tokens: ['--color-surface-muted', '--color-primary-soft', '--color-success', '--color-success-soft', '--color-warning', '--color-warning-soft', '--color-danger', '--color-danger-soft'],
+  tokens: ['--color-surface-muted', '--color-accent', '--color-accent-soft', '--color-success', '--color-success-soft', '--color-warning', '--color-warning-soft', '--color-danger', '--color-danger-soft', '--radius-xs'],
 };
 
 export default doc;

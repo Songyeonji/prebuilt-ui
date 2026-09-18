@@ -9,7 +9,7 @@ export function ModalDemo({ size = 'md', danger = false }: { size?: ModalSize; d
 
   return (
     <>
-      <Button variant={danger ? 'danger' : 'primary'} onClick={() => setOpen(true)}>
+      <Button variant={danger ? 'danger' : 'outline'} onClick={() => setOpen(true)}>
         {danger ? '삭제 확인 열기' : `${size.toUpperCase()} 모달 열기`}
       </Button>
       <Modal
