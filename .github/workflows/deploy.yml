@@ -1,9 +1,9 @@
 # main 에 커밋이 들어오면(push / PR 머지) 빌드 검사 후 Vercel Production 에 배포합니다.
 #
-# 필요한 GitHub Secrets (Settings → Secrets and variables → Actions):
-#   VERCEL_TOKEN       : https://vercel.com/account/tokens 에서 발급
-#   VERCEL_ORG_ID      : 로컬에서 `npx vercel link` 후 .vercel/project.json 의 orgId
-#   VERCEL_PROJECT_ID  : 같은 파일의 projectId
+# 필요한 GitHub Secrets (Settings → Secrets and variables → Actions → Repository secrets):
+#   VERCEL_TOKEN       : https://vercel.com/account/tokens 에서 발급 (Scope = 프로젝트가 속한 팀)
+#   VERCEL_ORG_ID      : `npx vercel link` 후 .vercel/repo.json(또는 project.json) 의 orgId
+#   VERCEL_PROJECT_ID  : 같은 파일의 id(projectId)
 name: Deploy to Vercel
 
 on:
@@ -14,10 +14,6 @@ on:
 concurrency:
   group: vercel-production
   cancel-in-progress: true
-
-env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
 jobs:
   deploy:
@@ -30,49 +26,61 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
-      - name: Install
-        run: npm ci
+      # Secret 값에 실수로 들어간 앞뒤 공백/줄바꿈/따옴표를 제거해서 이후 단계에서 사용
+      - name: Prepare Vercel credentials
+        env:
+          RAW_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          RAW_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          RAW_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          clean() { printf '%s' "$1" | tr -d "[:space:]\"'"; }
+          for pair in VERCEL_TOKEN:RAW_TOKEN VERCEL_ORG_ID:RAW_ORG_ID VERCEL_PROJECT_ID:RAW_PROJECT_ID; do
+            name=${pair%%:*}; raw_var=${pair##*:}; raw=${!raw_var}; value=$(clean "$raw")
+            if [ -z "$value" ]; then echo "::error::GitHub Secret '$name' 이 비어 있습니다."; exit 1; fi
+            if [ "$value" != "$raw" ]; then echo "::warning::'$name' 값에 공백/따옴표가 섞여 있어 제거했습니다. Secret 을 다시 저장해 두세요."; fi
+            [ "$name" = VERCEL_TOKEN ] && echo "::add-mask::$value"
+            echo "$name=$value" >> "$GITHUB_ENV"
+          done
 
       # 토큰/팀/프로젝트 조합이 맞는지 먼저 확인하고, 틀리면 무엇이 틀렸는지 로그에 남깁니다.
       - name: Verify Vercel access
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
           api() { curl -s -H "Authorization: Bearer $VERCEL_TOKEN" "https://api.vercel.com$1"; }
-          for name in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
-            if [ -z "${!name}" ]; then echo "::error::GitHub Secret '$name' 이 비어 있습니다."; exit 1; fi
-          done
 
-          user=$(api /v2/user | jq -r '.user.username // .error.message')
+          user=$(api /v2/user | jq -r '.user.username // ("❌ " + .error.message)')
           echo "토큰 소유자: $user"
           echo "이 토큰으로 접근 가능한 팀:"
           api /v2/teams | jq -r '.teams[]? | "  - \(.name) (\(.slug))  id=\(.id)"'
+          echo "사용하려는 ORG_ID: $VERCEL_ORG_ID / PROJECT_ID: $VERCEL_PROJECT_ID"
 
           res=$(api "/v9/projects/$VERCEL_PROJECT_ID?teamId=$VERCEL_ORG_ID")
           if echo "$res" | jq -e '.id' > /dev/null; then
-            echo "✅ 프로젝트 확인: $(echo "$res" | jq -r '.name') (team: $VERCEL_ORG_ID)"
+            echo "✅ 프로젝트 확인: $(echo "$res" | jq -r '.name')"
           else
-            echo "::error::프로젝트에 접근할 수 없습니다 → $(echo "$res" | jq -r '.error.code + ": " + .error.message')"
-            echo "::error::VERCEL_ORG_ID 가 위 '접근 가능한 팀' 목록의 id 중 프로젝트가 속한 팀과 같은지, 토큰 Scope 가 그 팀인지 확인하세요."
+            echo "::error::프로젝트에 접근할 수 없습니다 → $(echo "$res" | jq -r '(.error.code // "") + ": " + (.error.message // "")')"
+            echo "::error::토큰 Scope 가 ORG_ID 팀(위 목록에 있어야 함)인지 확인하고, 아니면 그 팀 Scope 로 토큰을 새로 발급하세요."
             exit 1
           fi
+
+      - name: Install
+        run: npm ci
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
       - name: Pull Vercel environment
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
 
       # next build 가 타입 체크까지 수행합니다. 실패하면 배포되지 않습니다.
       - name: Build
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel build --prod --token="$VERCEL_TOKEN"
 
       - name: Deploy
         id: deploy
         run: |
-          url=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
+          url=$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN")
           echo "url=$url" >> "$GITHUB_OUTPUT"
           echo "### 🚀 배포 완료: $url" >> "$GITHUB_STEP_SUMMARY"

@@ -11,3 +11,6 @@ dist
 next-env.d.ts
 *.tsbuildinfo
 *.tgz
+
+.vercel
+.env*
